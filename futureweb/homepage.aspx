@@ -26,13 +26,6 @@
             text-align: center;
         }
 
-        /* 閃爍效果 */
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-
         /* 提示文字樣式 */
         .blink-text {
             font-size: large;
@@ -41,12 +34,19 @@
             margin-bottom: 20px;
         }
 
-        /* 卡片容器樣式-提供3D視角的父容器*/
+        /* 閃爍效果 */
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* 卡片容器樣式 */
         .card-container {
             position: relative;
-            width: 200px;
-            height: 300px;
-            perspective: 1000px; /* 設置 3D 效果 */
+            width: 400px;
+            height: 600px;
+            perspective: 1000px;
         }
 
         .card {
@@ -72,24 +72,39 @@
             align-items: center;
             justify-content: center;
             font-size: 20px;
-            color: white;
+            color: black;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
+        /* 背面樣式 */
         .card .back {
-            background: linear-gradient(135deg, #9b59b6, #8e44ad); /* 背面樣式 */
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
         }
 
+        .card .back.shine-effect {
+            animation: shine 3s infinite alternate, gradient-shift 5s infinite;
+        }
+
+        /* 正面樣式 */
         .card .front {
-            background: linear-gradient(135deg, #ff9a9e, #fad0c4); /* 正面樣式 */
+            background: white;
             transform: rotateY(180deg);
         }
 
-        /* 閃亮特效 */
-        .shine-effect {
-            animation: shine 2s infinite alternate;
+        /* 動態漸層動畫 */
+        @keyframes gradient-shift {
+            0% {
+                background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            }
+            50% {
+                background: linear-gradient(135deg, #fad0c4, #a1c4fd);
+            }
+            100% {
+                background: linear-gradient(135deg, #a1c4fd, #ffdde1);
+            }
         }
 
+        /* 光影效果 */
         @keyframes shine {
             0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.3); }
             100% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.8); }
@@ -112,37 +127,43 @@
                 <div id="Panel1" class="card">
                     <!-- 卡片背面 -->
                     <div class="back">
-                        <asp:Label ID="LabelBack" runat="server" Text="點擊翻面"></asp:Label>
+                        <asp:Label ID="LabelBack" runat="server" Text="點擊翻面" ForeColor="white"></asp:Label>
                     </div>
                     <!-- 卡片正面 -->
                     <div class="front">
-                        <asp:Label ID="Label2" runat="server" Text=""></asp:Label>
+                        <asp:Label ID="Label2" runat="server" ForeColor="Black" Font-Size="X-Large"></asp:Label>
                     </div>
                 </div>
             </div>
         </div>
         <script>
-            // 卡片點擊事件
             function startCardProcess() {
-                const card = document.getElementById('Panel1');
-                card.classList.add('shine-effect'); // 添加閃亮特效
+                const cardBack = document.querySelector('#Panel1 .back'); // 獲取卡片背面
+                const card = document.getElementById('Panel1'); // 獲取整個卡片
+                cardBack.classList.add('shine-effect'); // 添加閃亮特效到背面
 
                 // 設置5秒後翻面
                 setTimeout(() => {
                     card.classList.add('flip'); // 翻面
-                    card.classList.remove('shine-effect'); // 移除閃亮特效
+                    cardBack.classList.remove('shine-effect'); // 移除背面的閃亮特效
                     __doPostBack('<%= Label2.ClientID %>', '');
                 }, 5000);
             }
         </script>
-        <p class="auto-style1">
-            <strong>
-            <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ConnectionString %>" SelectCommand="SELECT TOP 1 [text] 
-FROM [Sentence] 
-ORDER BY NEWID()
-"></asp:SqlDataSource>
-            <asp:Button ID="backBT" runat="server" BackColor="White" ForeColor="Black" OnClick="backBT_Click" Text="回到上頁" />
-            </strong>
+        <p>
+            <asp:SqlDataSource 
+                ID="SqlDataSource1" 
+                runat="server" 
+                ConnectionString="<%$ ConnectionStrings:ConnectionString %>" 
+                SelectCommand="SELECT TOP 1 [text] FROM [Sentence] ORDER BY NEWID()">
+            </asp:SqlDataSource>
+            <asp:Button 
+                ID="backBT" 
+                runat="server" 
+                BackColor="White" 
+                ForeColor="Black" 
+                OnClick="backBT_Click" 
+                Text="回到上頁" />
         </p>
     </form>
 </body>
